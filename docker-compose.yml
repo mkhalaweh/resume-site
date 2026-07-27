@@ -1,0 +1,27 @@
+services:
+  traefik:
+    image: traefik:v2.11
+    container_name: traefik
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+    networks:
+      - web
+
+  resume:
+    build: .
+    container_name: resume
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.resume.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.resume.entrypoints=web"
+      - "traefik.http.services.resume.loadbalancer.server.port=80"
+    networks:
+      - web
+
+networks:
+  web:
+    external: false
