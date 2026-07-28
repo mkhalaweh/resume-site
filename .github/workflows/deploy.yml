@@ -59,9 +59,6 @@ jobs:
     needs: security
     runs-on: ubuntu-latest
     steps:
-      # Pin: run `git ls-remote https://github.com/appleboy/ssh-action refs/tags/v1.2.2`
-      # (or whichever tag is current) and replace <SSH_ACTION_SHA>.
-      # This action receives VPS_SSH_KEY - verify this pin carefully.
       - name: Deploy to VPS via SSH
         uses: appleboy/ssh-action@2ead5e36573f08b82fbfce1504f1a4b05a647c6f # v1.2.2
         with:
