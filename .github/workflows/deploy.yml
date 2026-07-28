@@ -5,15 +5,65 @@ on:
     branches:
       - main
 
+# Least-privilege default.
+permissions:
+  contents: read
+
 jobs:
-  deploy:
+  # ------------------------------------------------------------------
+  # SECURITY GATE
+  #   SAST : Semgrep (official container, no third-party wrapper action)
+  #   SCA  : Trivy image scan (OS + library CVEs)
+  #   Secrets: Trivy secret scanner (replaces gitleaks)
+  # If this job fails, deploy never runs.
+  # ------------------------------------------------------------------
+  security:
+    name: Security scans
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
 
+      # ---------------- SAST: Semgrep ----------------
+      # Runs the official Semgrep container directly (the returntocorp/semgrep-action
+      # wrapper is deprecated). Code never leaves the runner with `semgrep scan`.
+      # --error makes Semgrep exit non-zero on findings, which fails the gate.
+      - name: Semgrep SAST scan
+        run: |
+          docker run --rm -v "${{ github.workspace }}:/src" -w /src \
+            semgrep/semgrep:latest \
+            semgrep scan --config auto --error
+
+      # ---------------- Build image for scanning ----------------
+      - name: Build image
+        run: docker build -t resume-site:scan .
+
+      # ---------------- SCA + secrets: Trivy ----------------
+      - name: Trivy scan (vuln + secret)
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: resume-site:scan
+          format: table
+          exit-code: "1"
+          ignore-unfixed: true
+          severity: CRITICAL,HIGH
+          scanners: vuln,secret
+
+  # ------------------------------------------------------------------
+  # DEPLOY  (only if security passed)
+  # ------------------------------------------------------------------
+  deploy:
+    name: Deploy
+    needs: security
+    runs-on: ubuntu-latest
+    steps:
+      # Pin: run `git ls-remote https://github.com/appleboy/ssh-action refs/tags/v1.2.2`
+      # (or whichever tag is current) and replace <SSH_ACTION_SHA>.
+      # This action receives VPS_SSH_KEY - verify this pin carefully.
       - name: Deploy to VPS via SSH
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@2ead5e36573f08b82fbfce1504f1a4b05a647c6f # v1.2.2
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
