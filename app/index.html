@@ -292,7 +292,7 @@ function resetSession(){
   cwd = []; mode = 'bash'; history = []; histIdx = -1;
   screen.innerHTML = '';
   titleEl.textContent = 'mkhalaweh10@resume — bash';
-  printLine('Welcome. This is a real (tiny) filesystem — try <b>ls</b>, <b>cd experience</b>, or <b>help</b>.');
+  printLine('Welcome. This is a real (tiny) filesystem — try <b>ls</b>, <b>cd experience</b>, or <b>help</b>. Tab completes commands and paths.');
   updatePrompt();
 }
 
@@ -557,7 +557,73 @@ status       not actively looking, always listening`
   updatePrompt();
 }
 
+const COMMANDS = ['ls','cd','cat','pwd','tree','whoami','clear','help','open'];
+
+function commonPrefix(strs){
+  if(strs.length===0) return '';
+  let prefix = strs[0];
+  for(const s of strs){
+    while(!s.startsWith(prefix)) prefix = prefix.slice(0, -1);
+  }
+  return prefix;
+}
+
+function handleTab(){
+  const val = input.value;
+  const endsWithSpace = /\s$/.test(val);
+  const tokens = val.split(/\s+/).filter(Boolean);
+  const isCommandSlot = tokens.length===0 || (tokens.length===1 && !endsWithSpace);
+
+  if(isCommandSlot){
+    const partial = tokens[0] || '';
+    const matches = COMMANDS.filter(c => c.startsWith(partial));
+    if(matches.length===1){
+      input.value = matches[0] + ' ';
+    } else if(matches.length>1){
+      const cp = commonPrefix(matches);
+      if(cp.length>partial.length) input.value = cp;
+      else printLine(matches.join('  '));
+    }
+    return;
+  }
+
+  // completing a path argument
+  const partialPath = endsWithSpace ? '' : tokens[tokens.length-1];
+  const lastSlash = partialPath.lastIndexOf('/');
+  const dirPart = lastSlash>=0 ? partialPath.slice(0,lastSlash) : '';
+  const namePart = lastSlash>=0 ? partialPath.slice(lastSlash+1) : partialPath;
+  const dirTarget = dirPart ? resolvePath(dirPart) : cwd;
+  const dirNode = getNode(dirTarget);
+  if(!dirNode || dirNode.type!=='dir') return;
+
+  const names = Object.keys(dirNode.children).filter(n => n.startsWith('.') ? namePart.startsWith('.') : true);
+  const matches = names.filter(n => n.startsWith(namePart));
+  if(matches.length===0) return;
+
+  if(matches.length===1){
+    const child = dirNode.children[matches[0]];
+    const completed = (dirPart ? dirPart+'/' : '') + matches[0] + (child.type==='dir' ? '/' : '');
+    const before = tokens.slice(0, tokens.length - (endsWithSpace?0:1)).join(' ');
+    input.value = (before ? before+' ' : '') + completed;
+  } else {
+    const cp = commonPrefix(matches);
+    if(cp.length>namePart.length){
+      const completed = (dirPart ? dirPart+'/' : '') + cp;
+      const before = tokens.slice(0, tokens.length - (endsWithSpace?0:1)).join(' ');
+      input.value = (before ? before+' ' : '') + completed;
+    } else {
+      const display = matches.map(m => dirNode.children[m].type==='dir' ? m+'/' : m);
+      printLine(display.join('  '));
+    }
+  }
+}
+
 input.addEventListener('keydown', e => {
+  if(e.key === 'Tab'){
+    e.preventDefault();
+    handleTab();
+    return;
+  }
   if(e.key === 'Enter'){
     const val = input.value;
     runCommand(val);
