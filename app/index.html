@@ -2,721 +2,582 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mohamad Halaweh — Cloud & Security Consultant</title>
-<meta name="description" content="Mohamad Halaweh — Security consultant specializing in cloud security architecture, SIEM engineering, and identity. Based in Doha, Qatar.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;450;500;600&display=swap" rel="stylesheet">
+<title>Mohamad Halaweh — Security Consulting</title>
 <style>
-  :root {
-    --ink: #0e1620;
-    --ink-2: #16212e;
-    --panel: #1b2836;
-    --line-dim: rgba(255,255,255,0.08);
-    --paper: #f7f8f7;
-    --paper-2: #eef1ef;
-    --text: #1a2530;
-    --text-soft: #55636f;
-    --text-faint: #8a97a2;
-    --accent: #159e8c;
-    --accent-bright: #22c3ad;
-    --accent-dim: rgba(21,158,140,0.12);
-    --rule: rgba(26,37,48,0.12);
-    --maxw: 1080px;
+  @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap');
+  :root{
+    --paper:#F3F1EA; --ink:#1B2430; --muted:#5B6472; --green:#2F4A3E; --rule:#D8D3C4;
+    --term-bg:#0B0F14; --accent:#E8A33D; --dim:#6E7B84; --term-text:#DDE6EC; --term-line:#20282F;
   }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;}
+  .wrap{max-width:760px;margin:0 auto;padding:90px 32px 140px;}
+  .kicker{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--green);font-weight:500;margin-bottom:22px;}
+  h1{font-family:'Newsreader',serif;font-weight:500;font-size:52px;line-height:1.08;margin:0 0 20px;letter-spacing:-.01em;}
+  .lede{font-family:'Newsreader',serif;font-style:italic;font-size:20px;color:var(--muted);line-height:1.55;max-width:600px;margin-bottom:40px;}
+  .rule{border:none;border-top:1px solid var(--rule);margin:44px 0;}
+  h2{font-family:'Newsreader',serif;font-size:15px;font-weight:500;letter-spacing:.02em;text-transform:uppercase;color:var(--green);margin:0 0 22px;}
+  .entry{margin-bottom:30px;}
+  .entry .top{display:flex;justify-content:space-between;align-items:baseline;gap:16px;}
+  .entry .role{font-size:17px;font-weight:500;}
+  .entry .org{font-family:'Newsreader',serif;font-style:italic;color:var(--muted);font-size:15px;}
+  .entry .dates{font-size:12.5px;color:var(--muted);white-space:nowrap;}
+  .entry p{font-size:15px;line-height:1.65;color:#333c46;margin:8px 0 0;max-width:640px;}
+  .pull{font-family:'Newsreader',serif;font-size:24px;line-height:1.4;color:var(--green);border-left:2px solid var(--green);padding-left:22px;margin:48px 0;}
+  .creds{display:flex;gap:26px;flex-wrap:wrap;margin-top:8px;}
+  .cred{font-size:12.5px;border:1px solid var(--rule);border-radius:2px;padding:6px 10px;color:var(--muted);}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  /* --- floating launcher button --- */
+  #launcher{
+    position:fixed;bottom:28px;right:28px;z-index:900;
+    background:var(--term-bg);color:var(--accent);border:1px solid var(--term-line);
+    font-family:'JetBrains Mono',monospace;font-size:13px;
+    padding:12px 18px;border-radius:8px;cursor:pointer;
+    display:flex;align-items:center;gap:8px;
+    box-shadow:0 4px 16px rgba(0,0,0,.18);
+  }
+  #launcher:hover{border-color:var(--accent);}
+  #launcher .ico{font-size:15px;}
 
-  html { scroll-behavior: smooth; }
-  @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
-    * { animation: none !important; transition: none !important; }
+  /* --- minimized taskbar tab --- */
+  #taskbar-tab{
+    position:fixed;bottom:28px;right:28px;z-index:900;
+    background:var(--term-bg);color:var(--term-text);border:1px solid var(--term-line);
+    font-family:'JetBrains Mono',monospace;font-size:12.5px;
+    padding:10px 16px;border-radius:8px;cursor:pointer;display:none;
+    align-items:center;gap:8px;box-shadow:0 4px 16px rgba(0,0,0,.18);
   }
+  #taskbar-tab:hover{border-color:var(--accent);}
+  #taskbar-tab .blip{width:7px;height:7px;border-radius:50%;background:var(--accent);}
 
-  body {
-    font-family: 'Inter', system-ui, sans-serif;
-    background: var(--paper);
-    color: var(--text);
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
+  /* --- terminal window --- */
+  #term{
+    position:fixed;bottom:28px;right:28px;width:640px;max-width:calc(100vw - 40px);
+    height:440px;background:#0D1319;border:1px solid var(--term-line);border-radius:8px;
+    overflow:hidden;z-index:950;box-shadow:0 12px 40px rgba(0,0,0,.35);
+    display:none;flex-direction:column;
   }
-
-  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
-
-  .mono {
-    font-family: 'IBM Plex Mono', monospace;
-    font-feature-settings: "zero" 1;
+  #term.maximized{
+    inset:0;bottom:0;right:0;width:auto;max-width:none;height:auto;border-radius:0;
   }
-
-  /* ---------- eyebrow / section labels ---------- */
-  .eyebrow {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 500;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
+  .term-bar{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid var(--term-line);flex-shrink:0;}
+  .term-title{margin-left:6px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dim);flex:1;}
+  .winbtn{
+    width:13px;height:13px;border-radius:50%;border:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;font-size:9px;line-height:1;
+    color:transparent;
   }
-  .eyebrow::before {
-    content: "";
-    width: 22px;
-    height: 1px;
-    background: var(--accent);
-    display: inline-block;
+  .winbtn:hover{color:rgba(0,0,0,.55);}
+  .winbtn.close{background:#E8615A;}
+  .winbtn.min{background:#E8B93F;}
+  .winbtn.max{background:#3FBF5D;}
+  #screen{
+    font-family:'JetBrains Mono',monospace;font-size:13.5px;line-height:1.75;color:var(--term-text);
+    padding:20px 20px 0;flex:1;overflow-y:auto;
   }
-
-  /* ================= HERO ================= */
-  .hero {
-    background: var(--ink);
-    color: #eef3f2;
-    position: relative;
-    overflow: hidden;
-    border-bottom: 1px solid var(--line-dim);
-  }
-  .hero::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(var(--line-dim) 1px, transparent 1px),
-      linear-gradient(90deg, var(--line-dim) 1px, transparent 1px);
-    background-size: 46px 46px;
-    mask-image: radial-gradient(ellipse 80% 70% at 70% 30%, #000 0%, transparent 75%);
-    opacity: 0.6;
-    pointer-events: none;
-  }
-  .hero-inner {
-    max-width: var(--maxw);
-    margin: 0 auto;
-    padding: 108px 32px 96px;
-    position: relative;
-    z-index: 1;
-  }
-  .hero .status {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12.5px;
-    letter-spacing: 0.1em;
-    color: var(--text-faint);
-    display: inline-flex;
-    align-items: center;
-    gap: 9px;
-    margin-bottom: 34px;
-  }
-  .dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--accent-bright);
-    box-shadow: 0 0 0 0 rgba(34,195,173,0.5);
-    animation: pulse 2.6s infinite;
-  }
-  @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(34,195,173,0.45); }
-    70% { box-shadow: 0 0 0 7px rgba(34,195,173,0); }
-    100% { box-shadow: 0 0 0 0 rgba(34,195,173,0); }
-  }
-  .hero h1 {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 600;
-    font-size: clamp(2.7rem, 6.5vw, 4.6rem);
-    line-height: 1.02;
-    letter-spacing: -0.02em;
-    color: #fff;
-    margin-bottom: 24px;
-  }
-  .hero h1 .accent { color: var(--accent-bright); }
-  .hero .lede {
-    font-size: clamp(1.05rem, 2vw, 1.28rem);
-    color: #b8c4cd;
-    max-width: 640px;
-    line-height: 1.55;
-    font-weight: 450;
-  }
-  .hero .meta {
-    margin-top: 40px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px 28px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px;
-    color: var(--text-faint);
-  }
-  .hero .meta span { display: inline-flex; align-items: center; gap: 8px; }
-  .hero .meta span::before { content: "▸"; color: var(--accent); font-size: 10px; }
-
-  /* ================= METRICS PANEL (signature) ================= */
-  .metrics {
-    background: var(--ink-2);
-    border-top: 1px solid var(--line-dim);
-  }
-  .metrics-grid {
-    max-width: var(--maxw);
-    margin: 0 auto;
-    padding: 0 32px;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-  }
-  .metric {
-    padding: 38px 28px 40px;
-    border-left: 1px solid var(--line-dim);
-    position: relative;
-  }
-  .metric:first-child { border-left: none; }
-  .metric .val {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(1.9rem, 3.4vw, 2.5rem);
-    font-weight: 600;
-    color: #fff;
-    line-height: 1;
-    letter-spacing: -0.01em;
-    display: flex;
-    align-items: baseline;
-    gap: 4px;
-  }
-  .metric .val .unit { color: var(--accent-bright); font-size: 0.62em; font-weight: 500; }
-  .metric .val .arrow { color: var(--accent-bright); font-size: 0.6em; margin: 0 2px; }
-  .metric .cap {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11.5px;
-    letter-spacing: 0.04em;
-    color: var(--text-faint);
-    margin-top: 14px;
-    line-height: 1.5;
-    text-transform: uppercase;
-  }
-
-  /* ================= SECTION SHELL ================= */
-  section { padding: 92px 0; }
-  .section-head { margin-bottom: 52px; max-width: 720px; }
-  .section-head h2 {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 600;
-    font-size: clamp(1.7rem, 3.5vw, 2.3rem);
-    letter-spacing: -0.015em;
-    color: var(--ink);
-    margin-top: 18px;
-    line-height: 1.12;
-  }
-  .section-head p {
-    color: var(--text-soft);
-    margin-top: 16px;
-    font-size: 1.05rem;
-    max-width: 620px;
-  }
-
-  /* ---------- ABOUT ---------- */
-  .about { background: var(--paper); }
-  .about-body {
-    font-size: 1.12rem;
-    line-height: 1.72;
-    color: var(--text);
-    max-width: 720px;
-  }
-  .about-body p + p { margin-top: 20px; }
-  .about-body strong { color: var(--ink); font-weight: 600; }
-
-  /* ---------- SKILLS ---------- */
-  .skills { background: var(--paper-2); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
-  .skill-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1px;
-    background: var(--rule);
-    border: 1px solid var(--rule);
-  }
-  .skill-col {
-    background: var(--paper);
-    padding: 28px 26px 30px;
-  }
-  .skill-col h3 {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 18px;
-    font-weight: 600;
-  }
-  .skill-col ul { list-style: none; }
-  .skill-col li {
-    font-size: 0.97rem;
-    color: var(--text);
-    padding: 7px 0;
-    border-bottom: 1px dashed var(--rule);
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-  }
-  .skill-col li:last-child { border-bottom: none; }
-  .skill-col li::before {
-    content: "—";
-    color: var(--text-faint);
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.85em;
-  }
-
-  /* ---------- EXPERIENCE (timeline) ---------- */
-  .exp { background: var(--paper); }
-  .role {
-    display: grid;
-    grid-template-columns: 190px 1fr;
-    gap: 32px;
-    padding: 36px 0;
-    border-top: 1px solid var(--rule);
-  }
-  .role:last-child { border-bottom: 1px solid var(--rule); }
-  .role-side .period {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12.5px;
-    color: var(--accent);
-    font-weight: 500;
-    letter-spacing: 0.02em;
-  }
-  .role-side .org {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 600;
-    font-size: 1.05rem;
-    color: var(--ink);
-    margin-top: 8px;
-  }
-  .role-side .loc {
-    font-size: 12.5px;
-    color: var(--text-faint);
-    margin-top: 3px;
-    font-family: 'IBM Plex Mono', monospace;
-  }
-  .role-main h3 {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 1.22rem;
-    font-weight: 600;
-    color: var(--ink);
-    margin-bottom: 14px;
-    letter-spacing: -0.01em;
-  }
-  .role-main ul { list-style: none; }
-  .role-main li {
-    position: relative;
-    padding-left: 22px;
-    color: var(--text-soft);
-    font-size: 0.98rem;
-    line-height: 1.6;
-    margin-bottom: 11px;
-  }
-  .role-main li::before {
-    content: "";
-    position: absolute;
-    left: 0; top: 10px;
-    width: 7px; height: 7px;
-    border: 1px solid var(--accent);
-    background: var(--accent-dim);
-  }
-  .role-main li strong { color: var(--ink); font-weight: 600; }
-
-  /* ---------- CERTS ---------- */
-  .certs { background: var(--ink); color: #eef3f2; }
-  .certs .section-head h2 { color: #fff; }
-  .certs .eyebrow { color: var(--accent-bright); }
-  .certs .eyebrow::before { background: var(--accent-bright); }
-  .cert-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 16px;
-  }
-  .cert {
-    border: 1px solid var(--line-dim);
-    background: var(--panel);
-    padding: 22px 22px 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .cert .code {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px;
-    color: var(--accent-bright);
-    letter-spacing: 0.06em;
-    font-weight: 600;
-  }
-  .cert .name {
-    font-size: 0.98rem;
-    color: #d6dee4;
-    line-height: 1.45;
-  }
-  .cert .issuer {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: var(--text-faint);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    margin-top: 2px;
-  }
-
-  /* ---------- EDUCATION strip ---------- */
-  .edu { background: var(--paper-2); border-top: 1px solid var(--rule); }
-  .edu-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-  .edu-row .degree {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 600;
-    font-size: 1.15rem;
-    color: var(--ink);
-  }
-  .edu-row .school { color: var(--text-soft); font-size: 1rem; }
-  .edu-row .school .mono { color: var(--accent); font-size: 0.85rem; }
-
-  /* ---------- CONTACT ---------- */
-  .contact { background: var(--paper); text-align: center; padding: 104px 0; }
-  .contact h2 {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 600;
-    font-size: clamp(1.9rem, 4vw, 2.7rem);
-    color: var(--ink);
-    letter-spacing: -0.02em;
-    margin: 20px 0 16px;
-  }
-  .contact p { color: var(--text-soft); max-width: 480px; margin: 0 auto 36px; font-size: 1.05rem; }
-  .contact .eyebrow { justify-content: center; }
-  .links { display: inline-flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
-  .link-btn {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 13.5px;
-    letter-spacing: 0.03em;
-    text-decoration: none;
-    color: var(--ink);
-    border: 1px solid var(--ink);
-    padding: 14px 26px;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
-  }
-  .link-btn:hover { background: var(--ink); color: #fff; transform: translateY(-2px); }
-  .link-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-  .link-btn svg { width: 17px; height: 17px; }
-
-  /* ---------- FOOTER ---------- */
-  footer {
-    background: var(--ink);
-    color: var(--text-faint);
-    padding: 26px 0;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 0.03em;
-    border-top: 1px solid var(--line-dim);
-  }
-  footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
-  footer a { color: var(--accent-bright); text-decoration: none; }
-
-  /* ---------- reveal animation ---------- */
-  .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s ease; }
-  .reveal.in { opacity: 1; transform: none; }
-
-  /* ---------- responsive ---------- */
-  @media (max-width: 720px) {
-    .metrics-grid { grid-template-columns: repeat(2, 1fr); }
-    .metric:nth-child(3) { border-left: none; }
-    .metric { border-top: 1px solid var(--line-dim); }
-    .metric:nth-child(-n+2) { border-top: none; }
-    .role { grid-template-columns: 1fr; gap: 16px; }
-    .hero-inner { padding: 80px 32px 68px; }
-    section { padding: 68px 0; }
-  }
-  @media (max-width: 460px) {
-    .wrap, .hero-inner, .metrics-grid { padding-left: 22px; padding-right: 22px; }
+  #screen::-webkit-scrollbar{width:8px;}
+  #screen::-webkit-scrollbar-thumb{background:var(--term-line);border-radius:4px;}
+  .line{white-space:pre-wrap;word-break:break-word;margin-bottom:2px;}
+  .path{color:var(--accent);}
+  .prompt-sep{color:var(--dim);}
+  .out{color:#9AABB5;margin:0 0 14px 0;white-space:pre-wrap;}
+  .out b{color:var(--accent);font-weight:500;}
+  .err{color:#D98872;margin:0 0 14px 0;white-space:pre-wrap;}
+  .ascii{color:#9AABB5;margin:0 0 14px 0;white-space:pre;overflow-x:auto;font-size:11px;line-height:1.35;}
+  .dirname{color:var(--accent);}
+  .filename{color:var(--term-text);}
+  .md-h1{color:var(--accent);font-weight:500;font-size:14.5px;margin:2px 0 4px;}
+  .md-sub{color:#9AABB5;margin:0 0 10px;}
+  .md-li{color:#9AABB5;margin:0 0 2px;padding-left:2px;}
+  .input-row{display:flex;align-items:center;padding:14px 20px 20px;gap:8px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:13.5px;}
+  #cmd{
+    flex:1;background:none;border:none;outline:none;color:var(--term-text);
+    font-family:'JetBrains Mono',monospace;font-size:13.5px;
   }
 </style>
 </head>
 <body>
 
-<!-- ================= HERO ================= -->
-<header class="hero">
-  <div class="hero-inner">
-    <div class="status mono"><span class="dot"></span>AVAILABLE FOR SECURITY &amp; CLOUD ENGAGEMENTS</div>
-    <h1>Mohamad Halaweh<br><span class="accent">Cloud &amp; Security</span> Consultant</h1>
-    <p class="lede">I design and defend cloud environments — from security architecture and identity to SIEM engineering and incident response. I turn security requirements into controls that hold up in production.</p>
-    <div class="meta mono">
-      <span>Doha, Qatar</span>
-      <span>Accenture</span>
-      <span>Cloud Security &middot; SIEM &middot; IAM</span>
-    </div>
-  </div>
-</header>
+<div class="wrap">
+  <div class="kicker">Security consulting · Doha, Qatar</div>
+  <h1>Mohamad Halaweh</h1>
+  <div class="lede">Advises cloud transformation programmes on identity, network security, and compliance — currently leading architecture reviews for Accenture's government and enterprise clients.</div>
 
-<!-- ================= METRICS PANEL ================= -->
-<div class="metrics">
-  <div class="metrics-grid">
-    <div class="metric">
-      <div class="val">$30<span class="unit">K/mo</span></div>
-      <div class="cap">SIEM ingestion<br>cost reduced</div>
-    </div>
-    <div class="metric">
-      <div class="val">50<span class="arrow">→</span>90<span class="unit">%</span></div>
-      <div class="cap">Cloud posture<br>score lifted</div>
-    </div>
-    <div class="metric">
-      <div class="val">100<span class="unit">%</span></div>
-      <div class="cap">SC-200 trainee<br>pass rate (8/8)</div>
-    </div>
-    <div class="metric">
-      <div class="val">30<span class="unit">+</span></div>
-      <div class="cap">Clients supported<br>across SOC ops</div>
-    </div>
+  <div class="rule"></div>
+  <h2>Experience</h2>
+
+  <div class="entry">
+    <div class="top"><span class="role">Security Consulting Consultant</span><span class="dates">May 2026 — present</span></div>
+    <div class="org">Accenture</div>
+    <p>Leads security architecture reviews and design workshops, and drives AI-assisted methods into threat investigation and policy analysis while keeping human oversight central.</p>
+  </div>
+
+  <div class="entry">
+    <div class="top"><span class="role">Security Consulting Analyst</span><span class="dates">Apr 2025 — May 2026</span></div>
+    <div class="org">Accenture</div>
+    <p>Advised on a multi-cloud security architecture for a large government hyperscaler engagement; built a tiered IAM model that improved the client's cloud posture score from 50% to 90%.</p>
+  </div>
+
+  <div class="pull">"Reduced SIEM ingestion costs by $30K a month, without giving up an inch of visibility."</div>
+
+  <div class="entry">
+    <div class="top"><span class="role">SIEM Engineer &amp; Incident Responder</span><span class="dates">2024 — 2025</span></div>
+    <div class="org">Wizard Cyber</div>
+    <p>Deployed Microsoft Sentinel and Defender environments end to end and led incident response from containment through post-incident reporting for enterprise clients.</p>
+  </div>
+
+  <div class="rule"></div>
+  <h2>Credentials</h2>
+  <div class="creds">
+    <span class="cred">AZ-500 · Azure Security</span>
+    <span class="cred">SC-300 · Identity &amp; Access</span>
+    <span class="cred">SC-200 · Security Operations</span>
+    <span class="cred">CCNA · Networking</span>
   </div>
 </div>
 
-<!-- ================= ABOUT ================= -->
-<section class="about">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <span class="eyebrow">01 / Profile</span>
-      <h2>Security that survives contact with production.</h2>
-    </div>
-    <div class="about-body reveal">
-      <p>I'm a security consultant at <strong>Accenture</strong> in Doha, working across cloud security architecture, identity, and detection engineering. My background runs from the SOC floor to the architecture whiteboard — I've built SIEM deployments from scratch, led incident response, and advised on multi-cloud security for large government and enterprise programs.</p>
-      <p>I studied <strong>Networks and Information Security Engineering</strong>, and I work most comfortably where security meets real infrastructure: <strong>Azure</strong> identity and governance, <strong>Microsoft Sentinel and Defender</strong>, SASE and WAF controls, and the day-to-day discipline of tuning detections, cutting false positives, and keeping ingestion costs honest.</p>
-    </div>
+<!-- floating launcher (shown when terminal is fully closed) -->
+<div id="launcher" onclick="openTerm()">
+  <span class="ico">&gt;_</span><span>Open terminal</span>
+</div>
+
+<!-- minimized taskbar tab (shown when minimized) -->
+<div id="taskbar-tab" onclick="restoreTerm()">
+  <span class="blip"></span><span id="taskbar-label">mkhalaweh10@resume — bash</span>
+</div>
+
+<!-- the terminal window itself -->
+<div id="term">
+  <div class="term-bar">
+    <button class="winbtn close" title="Close" onclick="closeTerm()">×</button>
+    <button class="winbtn min" title="Minimize" onclick="minimizeTerm()">–</button>
+    <button class="winbtn max" title="Maximize" onclick="toggleMaximize()">⤢</button>
+    <div class="term-title" id="term-title">mkhalaweh10@resume — bash</div>
   </div>
-</section>
-
-<!-- ================= SKILLS ================= -->
-<section class="skills">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <span class="eyebrow">02 / Capabilities</span>
-      <h2>What I work with.</h2>
-    </div>
-    <div class="skill-grid reveal">
-      <div class="skill-col">
-        <h3>Cloud Security</h3>
-        <ul>
-          <li>Azure security architecture</li>
-          <li>RBAC &amp; PIM (least privilege)</li>
-          <li>CSPM &amp; posture management</li>
-          <li>SASE &amp; WAF operations</li>
-          <li>CDN &amp; access controls</li>
-        </ul>
-      </div>
-      <div class="skill-col">
-        <h3>Detection &amp; Response</h3>
-        <ul>
-          <li>Microsoft Sentinel</li>
-          <li>Microsoft Defender</li>
-          <li>SIEM / SOAR engineering</li>
-          <li>Detection rule tuning</li>
-          <li>Incident response</li>
-        </ul>
-      </div>
-      <div class="skill-col">
-        <h3>Identity &amp; Governance</h3>
-        <ul>
-          <li>IAM design</li>
-          <li>Tiered access models</li>
-          <li>ISO 27001 mapping</li>
-          <li>Risk &amp; gap analysis</li>
-          <li>Vulnerability management</li>
-        </ul>
-      </div>
-      <div class="skill-col">
-        <h3>Foundations</h3>
-        <ul>
-          <li>Networking (CCNA)</li>
-          <li>Log retention strategy</li>
-          <li>Security automation</li>
-          <li>Penetration testing</li>
-          <li>Security documentation</li>
-        </ul>
-      </div>
-    </div>
+  <div id="screen"></div>
+  <div class="input-row">
+    <span class="path" id="prompt-path"></span><span class="prompt-sep">$</span>
+    <input id="cmd" autocomplete="off" spellcheck="false">
   </div>
-</section>
-
-<!-- ================= EXPERIENCE ================= -->
-<section class="exp">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <span class="eyebrow">03 / Track record</span>
-      <h2>Where I've done the work.</h2>
-    </div>
-
-    <div class="role reveal">
-      <div class="role-side">
-        <div class="period">MAY 2026 — NOW</div>
-        <div class="org">Accenture</div>
-        <div class="loc">Doha, QA</div>
-      </div>
-      <div class="role-main">
-        <h3>Security Consulting Consultant</h3>
-        <ul>
-          <li>Lead security architecture reviews and design workshops across <strong>cloud-native controls, identity, network security, and compliance</strong>.</li>
-          <li>Embed security-by-design across cloud transformation by leading cross-functional engagements with cloud, infrastructure, networking, and application teams.</li>
-          <li>Drive responsible AI adoption in security engagements — accelerating assessments, policy analysis, and threat investigations while keeping governance and human oversight.</li>
-          <li>Mentor junior consultants and analysts, reviewing deliverables and building team capability.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="role reveal">
-      <div class="role-side">
-        <div class="period">APR 2025 — MAY 2026</div>
-        <div class="org">Accenture</div>
-        <div class="loc">Doha, QA</div>
-      </div>
-      <div class="role-main">
-        <h3>Security Consulting Analyst</h3>
-        <ul>
-          <li>Cloud Security Consultant on a large-scale <strong>government hyperscaler engagement</strong> — multi-cloud architecture, threat management, and governance.</li>
-          <li>Designed a tiered IAM model with <strong>Azure RBAC and PIM</strong>, enforcing least privilege and strict prod / non-prod segregation.</li>
-          <li>Led <strong>WAF and SASE</strong> architecture and operations, securing cloud applications and access controls.</li>
-          <li>Defined a SIEM retention and optimization strategy that <strong>cut ingestion cost by $30K/month</strong> without losing security or compliance coverage.</li>
-          <li>Ran CSPM and compliance initiatives, raising the cloud posture score <strong>from 50% to 90%</strong>.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="role reveal">
-      <div class="role-side">
-        <div class="period">JUN 2024 — APR 2025</div>
-        <div class="org">Wizard Cyber</div>
-        <div class="loc">Amman, JO</div>
-      </div>
-      <div class="role-main">
-        <h3>SIEM Engineer &amp; Incident Responder</h3>
-        <ul>
-          <li>Led end-to-end onboarding — deploying <strong>Microsoft Sentinel and Defender</strong> from setup to full operational capability.</li>
-          <li>Ran incident response: containment, remediation, and post-incident analysis and reporting.</li>
-          <li>Primary point of contact for multiple clients on SIEM and SOAR engineering.</li>
-          <li>Drove pre-sales — proposals, technical demos, and POCs aligned to client success criteria.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="role reveal">
-      <div class="role-side">
-        <div class="period">FEB 2023 — JUN 2024</div>
-        <div class="org">Wizard Cyber</div>
-        <div class="loc">Amman, JO</div>
-      </div>
-      <div class="role-main">
-        <h3>Security Engineer</h3>
-        <ul>
-          <li>Built security playbooks and automation with cloud-native orchestration to lift operational efficiency.</li>
-          <li>Resolved L1/L2 tickets for <strong>30+ clients</strong>, applying deep technical expertise to maintain security.</li>
-          <li>Developed and fine-tuned detection rules to sharpen detection and cut false positives.</li>
-          <li>Coordinated the Training Academy — mentored <strong>8 trainees to a 100% SC-200 pass rate</strong>, promoting them into L1 SOC roles.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="role reveal">
-      <div class="role-side">
-        <div class="period">2022</div>
-        <div class="org">Black Mountain · Alpha-Hub</div>
-        <div class="loc">Amman, JO</div>
-      </div>
-      <div class="role-main">
-        <h3>Cybersecurity Consultant / Engineer</h3>
-        <ul>
-          <li>Mapped <strong>ISO 27001 ISMS</strong> to medical-lab standards; drafted proposals and reports; ran web and network penetration tests.</li>
-          <li>Hands-on with <strong>QRadar, Splunk, and ThreatQ</strong>, plus adversary emulation and XDR-style infrastructure (INE, Caldera).</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ================= CERTIFICATIONS ================= -->
-<section class="certs">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <span class="eyebrow">04 / Verified</span>
-      <h2>Certifications.</h2>
-    </div>
-    <div class="cert-grid reveal">
-      <div class="cert">
-        <span class="code mono">AZ-500</span>
-        <span class="name">Azure Security Engineer Associate</span>
-        <span class="issuer">Microsoft</span>
-      </div>
-      <div class="cert">
-        <span class="code mono">SC-300</span>
-        <span class="name">Identity and Access Administrator Associate</span>
-        <span class="issuer">Microsoft</span>
-      </div>
-      <div class="cert">
-        <span class="code mono">SC-200</span>
-        <span class="name">Security Operations Analyst Associate</span>
-        <span class="issuer">Microsoft</span>
-      </div>
-      <div class="cert">
-        <span class="code mono">CCNA</span>
-        <span class="name">Cisco Certified Network Associate</span>
-        <span class="issuer">Cisco</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ================= EDUCATION ================= -->
-<section class="edu">
-  <div class="wrap">
-    <div class="section-head reveal" style="margin-bottom:32px;">
-      <span class="eyebrow">05 / Education</span>
-    </div>
-    <div class="edu-row reveal">
-      <div>
-        <div class="degree">BE, Networks &amp; Information Security Engineering</div>
-        <div class="school">Princess Sumaya University for Technology</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ================= CONTACT ================= -->
-<section class="contact">
-  <div class="wrap">
-    <span class="eyebrow">06 / Contact</span>
-    <h2>Let's talk security.</h2>
-    <p>Open to conversations about cloud security, detection engineering, and consulting work.</p>
-    <div class="links">
-      <a class="link-btn" href="https://linkedin.com/in/mohamad-halaweh" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
-        LinkedIn
-      </a>
-      <a class="link-btn" href="https://github.com/mkhalaweh" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/></svg>
-        GitHub
-      </a>
-    </div>
-  </div>
-</section>
-
-<footer>
-  <div class="wrap">
-    <span>MOHAMAD HALAWEH</span>
-    <span>DOHA, QATAR &middot; <a href="https://mkhalaweh.dev">MKHALAWEH.DEV</a></span>
-  </div>
-</footer>
+</div>
 
 <script>
-  // scroll reveal — respects reduced motion
-  const rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (rm) {
-    document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
-  } else {
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-    }, { threshold: 0.12 });
-    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-  }
-</script>
+const fs = {
+  type:'dir',
+  children:{
+    'about.txt':{type:'file', content:
+`Mohamad Halaweh
+Security Consulting Consultant, Accenture — Doha, Qatar
 
+Networks and Information Security Engineering graduate (Princess Sumaya
+University for Technology), now advising enterprise and government clients
+on cloud security architecture, identity, and compliance.`},
+    'contact.txt':{type:'file', content:
+`email     mkhalaweh10@gmail.com
+phone     +974 5545 8442
+linkedin  linkedin.com/in/mohamad-halaweh
+location  Doha, Qatar`},
+    'skills.txt':{type:'file', content:
+`cloud security     Azure, multi-cloud architecture, CSPM
+identity           RBAC, PIM, least-privilege design
+detection          SIEM/SOAR, Microsoft Sentinel, Defender
+network security   WAF, SASE, CDN, access controls
+leadership         mentoring, client advisory, training delivery`},
+    'resume.pdf':{type:'pdf'},
+    'education':{type:'dir', children:{
+      'psut.md':{type:'file', content:
+`# Princess Sumaya University for Technology
+*BE, Networks and Information Security Engineering*`}
+    }},
+    'certifications':{type:'dir', children:{
+      'AZ-500.cert':{type:'file', content:'Microsoft Certified: Azure Security Engineer Associate'},
+      'SC-300.cert':{type:'file', content:'Microsoft Certified: Identity and Access Administrator Associate'},
+      'SC-200.cert':{type:'file', content:'Microsoft Certified: Security Operations Analyst Associate'},
+      'CCNA.cert':{type:'file', content:'Cisco Certified: Network Associate'}
+    }},
+    'experience':{type:'dir', children:{
+      'accenture':{type:'dir', children:{
+        'consulting-consultant.md':{type:'file', content:
+`# Security Consulting Consultant
+**Accenture** · May 2026 – present
+
+- Leads security architecture reviews and design workshops covering cloud-native controls, identity, network security, and compliance.
+- Drives AI adoption across engagements: AI-assisted security assessments, policy analysis, and threat investigation, with human oversight maintained throughout.
+- Leads cross-functional work with cloud, infrastructure, networking, and application teams to embed security-by-design.
+- Mentors junior consultants and analysts, reviewing deliverables and supporting capability development.`},
+        'consulting-analyst.md':{type:'file', content:
+`# Security Consulting Analyst
+**Accenture** · Apr 2025 – May 2026
+
+- Cloud Security Consultant on a large-scale government hyperscaler engagement: multi-cloud security architecture, threat management, governance.
+- Designed a tiered IAM model (Azure RBAC + PIM), enforcing least-privilege access and prod/non-prod segregation.
+- Led WAF and SASE architecture and operations, securing cloud apps and managing CDN/access controls.
+- Defined a SIEM log retention and optimization strategy, cutting ingestion costs by **$30K/month**.
+- Improved cloud security posture score from **50% to 90%** via CSPM and compliance initiatives.`}
+      }},
+      'wizard-cyber':{type:'dir', children:{
+        'siem-engineer-incident-responder.md':{type:'file', content:
+`# SIEM Engineer and Incident Responder
+**Wizard Cyber** · June 2024 – Apr 2025
+
+- Led end-to-end onboarding, deploying Microsoft Sentinel and Defender from setup to full operational capability.
+- Led incident response: containment, remediation, post-incident analysis and reporting.
+- Primary client contact for SIEM/SOAR engineering guidance.
+- Drove sales initiatives: proposals, technical demos, and POCs.`},
+        'security-engineer.md':{type:'file', content:
+`# Security Engineer
+**Wizard Cyber** · Feb 2023 – June 2024
+
+- Built security playbooks and automation rules via cloud-native orchestration tools.
+- Resolved L1/L2 tickets for 30+ clients.
+- Tuned detection rules to reduce false positives.
+- Coordinated the Training Academy: **8/8 trainees passed SC-200**.
+- Managed IAM and logging/detection systems; supported vulnerability management and risk assessments.`}
+      }},
+      'black-mountain':{type:'dir', children:{
+        'cybersecurity-consultant.md':{type:'file', content:
+`# Cybersecurity Consultant
+**Black Mountain** · Aug 2022 – Oct 2022
+
+- Mapped ISO 27001 ISMS to medical laboratory standards.
+- Drafted cybersecurity proposals and reports.
+- Performed web and network penetration tests.`}
+      }},
+      'alpha-hub':{type:'dir', children:{
+        'cybersecurity-engineer.md':{type:'file', content:
+`# Cybersecurity Engineer
+**Alpha-Hub ICT Solutions** · Apr 2022 – Aug 2022
+
+- Ran technical demos (QRadar, Splunk, ThreatQ) to raise team proficiency.
+- Gained hands-on grounding in ethical hacking, incident response, and adversary emulation (INE, Caldera).`}
+      }},
+      'ericsson':{type:'dir', children:{
+        'network-engineering-intern.md':{type:'file', content:
+`# Network Engineering Student Intern
+**Ericsson** · May 2018 – June 2018
+
+- Shadowed network engineers and project managers as part of a high-school training requirement.`}
+      }}
+    }},
+    '.clearance':{type:'file', content:
+`STATUS: employed, open to the right conversation
+CLEARED FOR: cloud security architecture, IAM, SIEM/SOC leadership`}
+  }
+};
+
+let cwd = [];
+let mode = 'bash';
+let history = [];
+let histIdx = -1;
+let windowState = 'closed'; // closed | windowed | maximized | minimized
+
+const screen = document.getElementById('screen');
+const input = document.getElementById('cmd');
+const promptPathEl = document.getElementById('prompt-path');
+const termEl = document.getElementById('term');
+const titleEl = document.getElementById('term-title');
+const launcherEl = document.getElementById('launcher');
+const taskbarEl = document.getElementById('taskbar-tab');
+const taskbarLabel = document.getElementById('taskbar-label');
+
+function render(){
+  launcherEl.style.display = windowState==='closed' ? 'flex' : 'none';
+  taskbarEl.style.display = windowState==='minimized' ? 'flex' : 'none';
+  termEl.style.display = (windowState==='windowed' || windowState==='maximized') ? 'flex' : 'none';
+  termEl.classList.toggle('maximized', windowState==='maximized');
+  if(windowState==='windowed' || windowState==='maximized') input.focus();
+}
+
+function resetSession(){
+  cwd = []; mode = 'bash'; history = []; histIdx = -1;
+  screen.innerHTML = '';
+  titleEl.textContent = 'mkhalaweh10@resume — bash';
+  printLine('Welcome. This is a real (tiny) filesystem — try <b>ls</b>, <b>cd experience</b>, or <b>help</b>.');
+  updatePrompt();
+}
+
+function openTerm(){
+  windowState = 'windowed';
+  resetSession();
+  render();
+}
+function restoreTerm(){
+  windowState = 'windowed';
+  render();
+}
+function minimizeTerm(){
+  windowState = 'minimized';
+  taskbarLabel.textContent = titleEl.textContent;
+  render();
+}
+function toggleMaximize(){
+  windowState = (windowState==='maximized') ? 'windowed' : 'maximized';
+  render();
+}
+function closeTerm(){
+  windowState = 'closed';
+  render();
+  // full reset happens next time it's opened via resetSession()
+}
+
+function pathString(arr){ return '~/' + arr.join('/'); }
+
+function updatePrompt(){
+  promptPathEl.textContent = 'mkhalaweh10@resume:' + (cwd.length? pathString(cwd) : '~');
+}
+
+function getNode(arr){
+  let node = fs;
+  for(const seg of arr){
+    if(node.type!=='dir' || !node.children[seg]) return null;
+    node = node.children[seg];
+  }
+  return node;
+}
+
+function resolvePath(raw){
+  let base = raw.startsWith('/') ? [] : cwd.slice();
+  const parts = raw.split('/').filter(p=>p.length && p!=='.');
+  for(const p of parts){
+    if(p==='..') base.pop();
+    else if(p==='~') base = [];
+    else base.push(p);
+  }
+  return base;
+}
+
+function escapeHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function inlineMd(s){
+  return escapeHtml(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\*(.+?)\*/g,'<i>$1</i>');
+}
+function renderMarkdown(text){
+  const lines = text.split('\n');
+  let html = '';
+  for(const line of lines){
+    if(/^# /.test(line)) html += '<div class="md-h1">'+escapeHtml(line.replace(/^# /,''))+'</div>';
+    else if(/^\*(.+)\*$/.test(line.trim()) && !line.trim().startsWith('**')) html += '<div class="md-sub">'+inlineMd(line.trim())+'</div>';
+    else if(/^- /.test(line)) html += '<div class="md-li">&nbsp;&nbsp;•&nbsp;'+inlineMd(line.replace(/^- /,''))+'</div>';
+    else if(line.trim()==='') html += '<div>&nbsp;</div>';
+    else html += '<div class="out" style="margin:0 0 4px;">'+inlineMd(line)+'</div>';
+  }
+  return html;
+}
+function listDir(node, showHidden){
+  const names = Object.keys(node.children).filter(n => showHidden || !n.startsWith('.'));
+  const dirs = names.filter(n => node.children[n].type==='dir').sort();
+  const files = names.filter(n => node.children[n].type!=='dir').sort();
+  const parts = [];
+  dirs.forEach(d => parts.push('<span class="dirname">'+d+'/</span>'));
+  files.forEach(f => parts.push('<span class="filename">'+f+'</span>'));
+  return parts.join('  ');
+}
+function tree(node, prefix, showHidden){
+  let out = '';
+  const names = Object.keys(node.children).filter(n => showHidden || !n.startsWith('.')).sort();
+  names.forEach((name, i) => {
+    const child = node.children[name];
+    const last = i === names.length - 1;
+    out += prefix + (last? '└── ' : '├── ') + (child.type==='dir' ? '<span class="dirname">'+name+'/</span>' : '<span class="filename">'+name+'</span>') + '\n';
+    if(child.type==='dir'){
+      out += tree(child, prefix + (last? '    ' : '│   '), showHidden);
+    }
+  });
+  return out;
+}
+function printLine(html, cls){
+  const div = document.createElement('div');
+  div.className = cls || 'out';
+  div.innerHTML = html;
+  screen.appendChild(div);
+  screen.scrollTop = screen.scrollHeight;
+}
+function printPre(text){
+  const pre = document.createElement('pre');
+  pre.className = 'ascii';
+  pre.textContent = text;
+  screen.appendChild(pre);
+  screen.scrollTop = screen.scrollHeight;
+}
+function printPromptEcho(cmdText){
+  const div = document.createElement('div');
+  div.className = 'line';
+  const promptTxt = 'mkhalaweh10@resume:'+(cwd.length? pathString(cwd):'~');
+  div.innerHTML = '<span class="path">'+promptTxt+'</span><span class="prompt-sep">$</span> '+escapeHtml(cmdText);
+  screen.appendChild(div);
+}
+function downloadResume(){
+  const a = document.createElement('a');
+  a.href = 'resume.pdf';
+  a.download = 'Mohamad_Halaweh_Resume.pdf';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+function runCommand(raw){
+  const trimmed = raw.trim();
+  printPromptEcho(raw);
+  if(!trimmed) return;
+  history.push(trimmed);
+  histIdx = history.length;
+
+  const [cmd, ...rest] = trimmed.split(/\s+/);
+  const args = rest.filter(a => !a.startsWith('-'));
+  const flags = rest.filter(a => a.startsWith('-')).join('');
+  const fullLower = trimmed.toLowerCase();
+
+  if(fullLower.startsWith('sudo hire')){
+    printLine('[sudo] password accepted on the first try.\nrequest logged — reach out directly: <a href="mailto:mkhalaweh10@gmail.com" style="color:var(--accent)">mkhalaweh10@gmail.com</a>');
+    return;
+  }
+  if(cmd==='nmap'){
+    printLine('Starting scan...\nPORT     STATE  SERVICE\n25/tcp   open   mailto (mkhalaweh10@gmail.com)\nall other ports filtered — try the front door instead.');
+    return;
+  }
+  if(fullLower.startsWith('rm -rf')){
+    printLine('rm: this filesystem is mounted read-only. nice try though.', 'err');
+    return;
+  }
+  if(cmd==='vim' || cmd==='vi'){
+    printLine(':wq — some things even a security engineer can\'t escape.');
+    return;
+  }
+  if(cmd==='man'){
+    printLine('No manual entry for humility. Try `help` instead.');
+    return;
+  }
+  if(cmd==='ping'){
+    printLine((args[0]||'host')+': already there. employee since 2025 — 0% packet loss.');
+    return;
+  }
+  if(cmd==='sl'){
+    printPre(
+`      ====        ________                ___________
+  _D _|  |_______/        \\__I_I_____===__|_________|
+   |(_)---  |   H\\________/ |   |        =|___ ___|
+   /     |  |   H  |  |     |   |         ||_| |_||
+  |      |  |   H  |__--------------------| [___] |
+  | ________|___H__/__|_____/[][]~\\_______|       |
+  |/ |   |-----------I_____I [][] [] D   |=======|__
+  \\_/      \\__/  \\__/    \\__/      \\_/      \\__/
+   choo choo — you meant 'ls', right?`
+    );
+    return;
+  }
+  if(cmd==='sudo'){
+    printLine('mkhalaweh10 is not in the sudoers file. this incident has been reported (to no one).', 'err');
+    return;
+  }
+  if(cmd==='whoami' && (flags.includes('verbose') || fullLower.includes('--verbose'))){
+    printLine(
+`uid=1000(mkhalaweh10) gid=1000(security-consulting)
+name         Mohamad Halaweh
+role         Security Consulting Consultant, Accenture
+groups       cloud-security, iam, siem-soc, compliance, mentors
+uptime       4y in security, 1y2mo at current role
+clearance    see .clearance (ls -a)
+shell        /bin/consultant
+signal       mkhalaweh10@gmail.com
+status       not actively looking, always listening`
+    );
+    return;
+  }
+
+  switch(cmd){
+    case 'ls': {
+      const target = args[0] ? resolvePath(args[0]) : cwd;
+      const node = getNode(target);
+      if(!node){ printLine('ls: cannot access '+(args[0]||'')+': No such file or directory', 'err'); break; }
+      if(node.type!=='dir'){ printLine(args[0], 'out'); break; }
+      const showHidden = flags.includes('a') || flags.includes('l');
+      printLine(listDir(node, showHidden) || '<span style="color:#455058">(empty)</span>');
+      break;
+    }
+    case 'cd': {
+      if(!args[0] || args[0]==='~'){ cwd = []; break; }
+      const target = resolvePath(args[0]);
+      const node = getNode(target);
+      if(!node){ printLine('cd: '+args[0]+': No such file or directory', 'err'); break; }
+      if(node.type!=='dir'){ printLine('cd: '+args[0]+': Not a directory', 'err'); break; }
+      cwd = target;
+      break;
+    }
+    case 'cat': {
+      if(!args[0]){ printLine('cat: missing operand', 'err'); break; }
+      const target = resolvePath(args[0]);
+      const node = getNode(target);
+      if(!node){ printLine('cat: '+args[0]+': No such file or directory', 'err'); break; }
+      if(node.type==='dir'){ printLine('cat: '+args[0]+': Is a directory', 'err'); break; }
+      if(node.type==='pdf'){ printLine('resume.pdf is binary. downloading instead...'); downloadResume(); break; }
+      if(target[target.length-1] && target[target.length-1].endsWith('.md')){
+        printLine(renderMarkdown(node.content));
+      } else {
+        printLine(escapeHtml(node.content).replace(/\n/g,'<br>'));
+      }
+      break;
+    }
+    case 'open': {
+      if(args[0] === 'resume.pdf'){ printLine('opening resume.pdf...'); downloadResume(); break; }
+      printLine('open: '+(args[0]||'')+': No such file or directory', 'err');
+      break;
+    }
+    case 'pwd':
+      printLine('/' + cwd.join('/'));
+      break;
+    case 'whoami':
+      printLine('Mohamad Halaweh — <b>Security Consulting Consultant</b>, Accenture');
+      break;
+    case 'tree': {
+      const target = args[0] ? resolvePath(args[0]) : cwd;
+      const node = getNode(target);
+      if(!node || node.type!=='dir'){ printLine('tree: not a directory', 'err'); break; }
+      printLine('.\n' + tree(node, '', flags.includes('a')));
+      break;
+    }
+    case 'clear':
+      screen.innerHTML = '';
+      break;
+    case 'help':
+      printLine(
+`available commands:
+  ls [-a] [path]     list files and directories
+  cd [path]          change directory
+  cat [file]         print a file's contents (renders markdown)
+  open resume.pdf    download the actual resume PDF
+  pwd                print working directory
+  tree [-a]          show the full structure
+  whoami             who this filesystem belongs to
+  clear              clear the screen`
+      );
+      break;
+    default:
+      printLine('bash: '+cmd+': command not found', 'err');
+  }
+  updatePrompt();
+}
+
+input.addEventListener('keydown', e => {
+  if(e.key === 'Enter'){
+    const val = input.value;
+    runCommand(val);
+    input.value = '';
+  } else if(e.key === 'ArrowUp'){
+    if(histIdx > 0){ histIdx--; input.value = history[histIdx]; }
+    e.preventDefault();
+  } else if(e.key === 'ArrowDown'){
+    if(histIdx < history.length - 1){ histIdx++; input.value = history[histIdx]; }
+    else { histIdx = history.length; input.value=''; }
+    e.preventDefault();
+  }
+});
+
+termEl.addEventListener('click', (e) => {
+  if(e.target.closest('.term-bar')) return;
+  input.focus();
+});
+
+render();
+</script>
 </body>
 </html>
