@@ -15,6 +15,8 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
+# Dummy value so Prisma doesn't crash during build — real DB is on the volume at runtime
+ENV DATABASE_URL=file:///tmp/build-placeholder.db
 # Generate Prisma client for the target platform
 RUN npx prisma generate
 # Produces .next/standalone/ (output: "standalone" in next.config.ts)

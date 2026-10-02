@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getPublishedArticles, getAllTags } from "@/app/lib/articles";
 import { readingTime } from "@/app/lib/markdown";
 import Link from "next/link";

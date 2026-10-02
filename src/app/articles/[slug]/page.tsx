@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getArticleBySlug, getPublishedArticles, getRelatedArticles } from "@/app/lib/articles";
 import { markdownToHtml, readingTime } from "@/app/lib/markdown";
 import { addSyntaxHighlighting } from "@/app/lib/highlighter";

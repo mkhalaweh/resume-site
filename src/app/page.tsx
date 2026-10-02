@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getResume } from "@/app/lib/resume";
 import { getPublishedArticles } from "@/app/lib/articles";
 import Terminal from "@/components/Terminal";
