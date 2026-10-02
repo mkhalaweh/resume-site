@@ -9,26 +9,25 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const { slug } = await params;
-  const article = await getArticleBySlug(slug);
-  if (!article) return {};
-  const desc = article.excerpt || article.content.replace(/<[^>]+>/g, "").slice(0, 160);
-  return {
-    title: article.title,
-    description: desc,
-    openGraph: {
+  try {
+    const { slug } = await params;
+    const article = await getArticleBySlug(slug);
+    if (!article) return {};
+    const desc = article.excerpt || article.content.replace(/<[^>]+>/g, "").slice(0, 160);
+    return {
       title: article.title,
       description: desc,
-      type: "article",
-      publishedTime: new Date(article.createdAt).toISOString(),
-    },
-    twitter: { card: "summary_large_image", title: article.title, description: desc },
-  };
-}
-
-export async function generateStaticParams() {
-  const articles = await getPublishedArticles();
-  return articles.map(a => ({ slug: a.slug }));
+      openGraph: {
+        title: article.title,
+        description: desc,
+        type: "article",
+        publishedTime: new Date(article.createdAt).toISOString(),
+      },
+      twitter: { card: "summary_large_image", title: article.title, description: desc },
+    };
+  } catch {
+    return {};
+  }
 }
 
 function formatDate(d: Date) {
