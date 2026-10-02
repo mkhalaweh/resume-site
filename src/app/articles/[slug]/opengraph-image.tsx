@@ -6,9 +6,15 @@ export const contentType = "image/png";
 
 export default async function OgImage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const article = await getArticleBySlug(slug);
-  const title = article?.title ?? "Article";
-  const excerpt = article?.excerpt ?? "";
+  let title = "Article";
+  let excerpt = "";
+  try {
+    const article = await getArticleBySlug(slug);
+    title = article?.title ?? "Article";
+    excerpt = article?.excerpt ?? "";
+  } catch {
+    // DB unavailable at build time — fall back to defaults
+  }
 
   return new ImageResponse(
     <div
