@@ -16,7 +16,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Must be an image (jpg, png, gif, webp, svg)" }, { status: 400 });
   }
 
-  const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+  const rawExt = file.name.split(".").pop()?.toLowerCase() || "jpg";
+  const ext = rawExt.replace(/[^a-z0-9]/g, "") || "jpg";
   const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
   const dataDir = process.env.DATA_DIR || path.join(process.cwd(), "public");
   const uploadsDir = path.join(dataDir, "uploads");
