@@ -65,7 +65,13 @@ COPY --from=builder /app/node_modules/bcryptjs ./node_modules/bcryptjs
 RUN mkdir -p /app/data && chown nextjs:nodejs /app/data
 
 COPY --chown=nextjs:nodejs docker-entrypoint.sh ./
-RUN chmod +x docker-entrypoint.sh
+RUN sed -i 's/\r$//' docker-entrypoint.sh && chmod +x docker-entrypoint.sh
+
+# Remove npm and yarn — not needed at runtime, eliminates their CVEs from Trivy
+RUN rm -rf /usr/local/lib/node_modules/npm \
+           /usr/local/bin/npm \
+           /usr/local/bin/npx \
+           /opt/yarn-v1.22.22
 
 USER nextjs
 EXPOSE 3000
