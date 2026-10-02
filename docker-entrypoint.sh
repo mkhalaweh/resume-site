@@ -9,7 +9,7 @@ node_modules/.bin/prisma db push --skip-generate
 SEED_MARKER=/app/data/.seeded
 if [ ! -f "$SEED_MARKER" ]; then
   echo "[entrypoint] First boot — seeding database..."
-  node_modules/.bin/tsx prisma/seed.ts
+  node prisma/seed.js
   touch "$SEED_MARKER"
   echo "[entrypoint] Seed complete."
 else

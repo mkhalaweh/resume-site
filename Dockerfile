@@ -21,6 +21,14 @@ ENV DATABASE_URL=file:///tmp/build-placeholder.db
 RUN npx prisma generate
 # Produces .next/standalone/ (output: "standalone" in next.config.ts)
 RUN npm run build
+# Pre-compile seed to CJS so the runner needs no tsx/TypeScript toolchain
+RUN npx tsc prisma/seed.ts \
+      --module commonjs \
+      --moduleResolution node \
+      --esModuleInterop \
+      --target ES2017 \
+      --skipLibCheck \
+      --outDir /tmp/seed-build
 
 # ---- Stage 3: Production runner ----
 FROM node:20-alpine AS runner
@@ -51,16 +59,12 @@ COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
 # Prisma client + native query engine
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 
-# tsx runtime for seed.ts execution
-COPY --from=builder /app/node_modules/tsx ./node_modules/tsx
-COPY --from=builder /app/node_modules/get-tsconfig ./node_modules/get-tsconfig
-COPY --from=builder /app/node_modules/resolve-pkg-maps ./node_modules/resolve-pkg-maps
+# Pre-compiled seed (plain JS, no TypeScript toolchain needed at runtime)
+COPY --from=builder /tmp/seed-build/seed.js ./prisma/seed.js
 
-# Symlinks instead of copied files so __dirname resolves inside each package
-# (copying .bin/ entries resolves the symlink, breaking relative wasm/module lookups)
+# Symlink prisma CLI so __dirname resolves inside the package (needed for wasm lookup)
 RUN mkdir -p /app/node_modules/.bin && \
-    ln -sf /app/node_modules/prisma/build/index.js /app/node_modules/.bin/prisma && \
-    ln -sf /app/node_modules/tsx/dist/cli.mjs /app/node_modules/.bin/tsx
+    ln -sf /app/node_modules/prisma/build/index.js /app/node_modules/.bin/prisma
 
 # bcryptjs — runtime dep used in seed.ts
 COPY --from=builder /app/node_modules/bcryptjs ./node_modules/bcryptjs
