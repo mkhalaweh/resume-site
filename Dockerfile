@@ -48,15 +48,19 @@ COPY --from=builder --chown=nextjs:nodejs /app/tsconfig.json ./tsconfig.json
 
 # Prisma CLI (contains migration engine for db push)
 COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
-COPY --from=builder /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
 # Prisma client + native query engine
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 
 # tsx runtime for seed.ts execution
 COPY --from=builder /app/node_modules/tsx ./node_modules/tsx
-COPY --from=builder /app/node_modules/.bin/tsx ./node_modules/.bin/tsx
 COPY --from=builder /app/node_modules/get-tsconfig ./node_modules/get-tsconfig
 COPY --from=builder /app/node_modules/resolve-pkg-maps ./node_modules/resolve-pkg-maps
+
+# Symlinks instead of copied files so __dirname resolves inside each package
+# (copying .bin/ entries resolves the symlink, breaking relative wasm/module lookups)
+RUN mkdir -p /app/node_modules/.bin && \
+    ln -sf /app/node_modules/prisma/build/index.js /app/node_modules/.bin/prisma && \
+    ln -sf /app/node_modules/tsx/dist/cli.mjs /app/node_modules/.bin/tsx
 
 # bcryptjs — runtime dep used in seed.ts
 COPY --from=builder /app/node_modules/bcryptjs ./node_modules/bcryptjs
