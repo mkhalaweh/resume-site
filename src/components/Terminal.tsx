@@ -549,6 +549,7 @@ export default function Terminal({ resume, articles }: { resume: ResumeForTermin
           </div>
           <div
             ref={screenRef}
+            className="term-screen"
             style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13.5, lineHeight: 1.75, color: "var(--term-text)", padding: "20px 20px 0", flex: 1, overflowY: "auto" }}
           >
             {screenEntries.map((entry, i) => {

@@ -56,6 +56,9 @@ body {
 }
 .term-pulse { animation: term-pulse 2.8s ease-in-out infinite; }
 
+.term-screen { scrollbar-width: none; }
+.term-screen::-webkit-scrollbar { display: none; }
+
 @media (max-width: 640px) {
   .page-heading { font-size: 2rem !important; }
   .page-subheading { font-size: 1.1rem !important; }
