@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model Resume {
+  id         String   @id @default(cuid())
+  name       String
+  title      String
+  location   String
+  about      String
+  skills     String   @default("[]")
+  experience String   @default("[]")
+  certs      String   @default("[]")
+  education  String   @default("[]")
+  email      String?
+  phone      String?
+  linkedin   String?
+  github     String?
+  updatedAt  DateTime @updatedAt
+}
+
+model Article {
+  id         String   @id @default(cuid())
+  slug       String   @unique
+  title      String
+  excerpt    String   @default("")
+  content    String   @default("")
+  coverImage String?
+  tags       String   @default("[]")
+  published  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([published, createdAt])
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}

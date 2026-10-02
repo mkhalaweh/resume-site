@@ -1,0 +1,59 @@
+name: Security Gate + Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# SHA pins — same supply-chain practice as resume-site; re-verify on upgrades
+# actions/checkout       9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+# aquasecurity/trivy-action  ed142fd0673e97e23eac54620cfb913e5ce36c25  # v0.36.0
+# appleboy/ssh-action    2ead5e36573f08b82fbfce1504f1a4b05a647c6f   # v1.2.2
+
+jobs:
+  security:
+    name: Security Gate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Semgrep SAST
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/src" \
+            semgrep/semgrep \
+            semgrep scan --config auto --error
+
+      - name: Build image for Trivy scan
+        run: docker build --platform linux/amd64 -t mkhalaweh-web:scan .
+
+      - name: Trivy image scan
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: mkhalaweh-web:scan
+          scanners: vuln,secret
+          severity: CRITICAL,HIGH
+          exit-code: "1"
+          ignore-unfixed: true
+
+  deploy:
+    name: Deploy to VPS
+    needs: security
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: SSH deploy
+        uses: appleboy/ssh-action@2ead5e36573f08b82fbfce1504f1a4b05a647c6f # v1.2.2
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            set -e
+            cd ~/resume-site
+            git pull origin main
+            docker build --platform linux/amd64 -t mkhalaweh-web:latest .
+            docker compose up -d --no-deps web
+            echo "Deploy complete."

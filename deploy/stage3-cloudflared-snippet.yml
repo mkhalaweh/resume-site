@@ -1,0 +1,22 @@
+# Add this ingress rule to /etc/cloudflared/config.yml on the VPS
+# Insert it BEFORE the catch-all 404 rule at the bottom.
+#
+# After editing, restart cloudflared:
+#   sudo systemctl restart cloudflared
+#
+# Also add the DNS CNAME in the Cloudflare dashboard:
+#   Type: CNAME
+#   Name: new
+#   Target: <your-tunnel-id>.cfargotunnel.com
+#   Proxy: enabled (orange cloud)
+#
+# (The tunnel-id is in /etc/cloudflared/config.yml under 'tunnel:')
+
+ingress:
+  # ... existing rules above this ...
+
+  - hostname: new.mkhalaweh.dev
+    service: http://localhost:80
+
+  # catch-all must remain last
+  - service: http_status:404

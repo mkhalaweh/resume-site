@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(New-Item *)",
+      "PowerShell(Start-Sleep -Seconds 5; $result = Invoke-WebRequest -Uri \"http://localhost:3000\" -UseBasicParsing -TimeoutSec 10 -ErrorAction SilentlyContinue; if \\($result\\) { \"Server up: $\\($result.StatusCode\\)\" } else { \"Not ready yet\" })",
+      "PowerShell(Start-Sleep -Seconds 3; $r = Invoke-WebRequest -Uri \"http://localhost:3000\" -UseBasicParsing -ErrorAction SilentlyContinue; \"Home: $\\($r.StatusCode\\)\"; $r2 = Invoke-WebRequest -Uri \"http://localhost:3000/resume\" -UseBasicParsing -ErrorAction SilentlyContinue; \"Resume: $\\($r2.StatusCode\\)\"; $r3 = Invoke-WebRequest -Uri \"http://localhost:3000/articles\" -UseBasicParsing -ErrorAction SilentlyContinue; \"Articles: $\\($r3.StatusCode\\)\"; $r4 = Invoke-WebRequest -Uri \"http://localhost:3000/admin/login\" -UseBasicParsing -ErrorAction SilentlyContinue; \"Admin login: $\\($r4.StatusCode\\)\")",
+      "PowerShell(Invoke-WebRequest -Uri \"http://localhost:3000/api/articles\" -Method POST -ContentType \"application/json\" -Body '{\"title\":\"Test\",\"slug\":\"test\",\"excerpt\":\"\",\"content\":\"hello\",\"published\":false}' -UseBasicParsing -ErrorAction SilentlyContinue | Select-Object StatusCode, Content)",
+      "PowerShell($processes = Get-Process -Name \"node\" -ErrorAction SilentlyContinue; \"Node processes: $\\($processes.Count\\)\"; Invoke-WebRequest -Uri \"http://localhost:3000/admin/articles/new\" -UseBasicParsing -ErrorAction SilentlyContinue | Select-Object StatusCode)",
+      "PowerShell(Get-Process *)",
+      "PowerShell(Start-Sleep -Seconds 7; $r = Invoke-WebRequest -Uri \"http://localhost:3000\" -UseBasicParsing -ErrorAction SilentlyContinue; if \\($r\\) { \"Up: $\\($r.StatusCode\\)\" } else { \"Not ready\" })",
+      "PowerShell(Start-Sleep -Seconds 5; Invoke-WebRequest -Uri \"http://localhost:3000\" -UseBasicParsing -TimeoutSec 10 | Select-Object -ExpandProperty StatusCode)",
+      "PowerShell(Start-Sleep -Seconds 8; Invoke-WebRequest -Uri \"http://localhost:3000\" -UseBasicParsing -TimeoutSec 10 | Select-Object -ExpandProperty StatusCode)",
+      "PowerShell(Start-Sleep -Seconds 9; Invoke-WebRequest -Uri \"http://localhost:3000\" -UseBasicParsing -TimeoutSec 10 | Select-Object -ExpandProperty StatusCode)",
+      "PowerShell($env:PATH += \";C:\\\\Program Files\\\\Git\\\\bin;C:\\\\Program Files\\\\Git\\\\cmd\"; cd \"C:\\\\Users\\\\mohamad.halaweh\\\\Documents\\\\mkhalaweh-web\"; git status 2>&1 | Select-Object -First 10)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "PowerShell(Get-ChildItem *)"
+    ]
+  }
+}

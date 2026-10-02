@@ -1,0 +1,27 @@
+.git
+.gitignore
+.next
+node_modules
+npm-debug.log*
+
+# local env and secrets
+.env*
+
+# dev database
+dev.db
+prisma/dev.db
+
+# uploaded files (mounted as volume in production)
+public/uploads
+
+# docs and local tooling
+*.md
+.dockerignore
+Dockerfile
+DEPLOY-HANDOFF.md
+docker-compose.yml
+traefik/
+deploy/
+
+# TypeScript build info
+*.tsbuildinfo

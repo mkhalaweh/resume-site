@@ -1,0 +1,36 @@
+# Add this to ~/resume-site/docker-compose.yml
+#
+# 1. Paste the 'web' service block under 'services:' (alongside traefik and resume).
+# 2. Paste the 'web_data' block under the top-level 'volumes:' section.
+#    If there is no volumes: section, add it at the end of the file.
+#
+# Then run:
+#   cd ~/resume-site
+#   docker compose up -d web
+
+services:
+  web:
+    image: mkhalaweh-web:latest
+    restart: unless-stopped
+    networks:
+      - web
+    volumes:
+      - web_data:/app/data
+    environment:
+      DATABASE_URL: "file:/app/data/prod.db"
+      DATA_DIR: "/app/data"
+      JWT_SECRET: "${JWT_SECRET}"
+      ADMIN_EMAIL: "${ADMIN_EMAIL}"
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
+      RESUME_EMAIL: "${RESUME_EMAIL:-}"
+      RESUME_PHONE: "${RESUME_PHONE:-}"
+    labels:
+      - "traefik.enable=true"
+      # Temp hostname for testing (before cutover)
+      - "traefik.http.routers.web-new.rule=Host(`new.mkhalaweh.dev`)"
+      - "traefik.http.routers.web-new.entrypoints=web"
+      - "traefik.http.services.web-svc.loadbalancer.server.port=3000"
+      - "traefik.http.routers.web-new.service=web-svc"
+
+volumes:
+  web_data:
