@@ -21,6 +21,7 @@ export default function LoginPage() {
     });
     setLoading(false);
     if (res.ok) {
+      router.refresh();
       router.push("/admin");
     } else {
       const data = await res.json();
@@ -40,14 +41,14 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: 16 }}>
             <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: "#6E7B84", marginBottom: 6, letterSpacing: "0.05em" }}>EMAIL</label>
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)} required
-              style={{ width: "100%", background: "#141e2b", border: "1px solid #20282F", borderRadius: 4, color: "#DDE6EC", fontFamily: "'JetBrains Mono', monospace", fontSize: 13, padding: "10px 12px", outline: "none", boxSizing: "border-box" }}
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} required autoComplete="email"
+              style={{ width: "100%", background: "#141e2b", border: "1px solid #20282F", borderRadius: 4, color: "#DDE6EC", fontFamily: "'JetBrains Mono', monospace", fontSize: 16, padding: "10px 12px", outline: "none", boxSizing: "border-box" }}
             />
           </div>
           <div style={{ marginBottom: 24 }}>
             <label style={{ display: "block", fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: "#6E7B84", marginBottom: 6, letterSpacing: "0.05em" }}>PASSWORD</label>
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} required
-              style={{ width: "100%", background: "#141e2b", border: "1px solid #20282F", borderRadius: 4, color: "#DDE6EC", fontFamily: "'JetBrains Mono', monospace", fontSize: 13, padding: "10px 12px", outline: "none", boxSizing: "border-box" }}
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)} required autoComplete="current-password"
+              style={{ width: "100%", background: "#141e2b", border: "1px solid #20282F", borderRadius: 4, color: "#DDE6EC", fontFamily: "'JetBrains Mono', monospace", fontSize: 16, padding: "10px 12px", outline: "none", boxSizing: "border-box" }}
             />
           </div>
           {error && <div style={{ color: "#D98872", fontFamily: "'JetBrains Mono', monospace", fontSize: 12, marginBottom: 16 }}>{error}</div>}

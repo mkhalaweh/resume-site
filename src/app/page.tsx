@@ -1,8 +1,6 @@
 export const dynamic = "force-dynamic";
 
 import { getResume } from "@/app/lib/resume";
-import { getPublishedArticles } from "@/app/lib/articles";
-import Terminal from "@/components/Terminal";
 import ContactForm from "@/components/ContactForm";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -18,7 +16,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const [resume, articles] = await Promise.all([getResume(), getPublishedArticles()]);
+  const resume = await getResume();
 
   if (!resume) {
     return (
@@ -67,7 +65,6 @@ export default async function Home() {
         <ContactForm />
       </div>
 
-      <Terminal resume={resume} articles={articles} />
     </main>
   );
 }

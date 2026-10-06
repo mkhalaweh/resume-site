@@ -49,10 +49,6 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   return (
     <main style={{ background: "var(--paper)", color: "var(--ink)", minHeight: "100vh" }}>
       <div className="page-pad" style={{ maxWidth: 760, margin: "0 auto", padding: "64px 32px 140px" }}>
-        <div style={{ marginBottom: 48 }}>
-          <Link href="/articles" style={{ fontFamily: "var(--font-geist-mono, monospace)", fontSize: 13, color: "var(--muted)", textDecoration: "none" }}>← articles</Link>
-        </div>
-
         <div style={{ fontFamily: "var(--font-geist-mono, monospace)", fontSize: 11.5, color: "var(--muted)", letterSpacing: "0.1em", marginBottom: 20, display: "flex", gap: 20, flexWrap: "wrap", alignItems: "center" }}>
           <span>{formatDate(new Date(article.createdAt))}</span>
           <span>{minutes} min read</span>

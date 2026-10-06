@@ -65,4 +65,9 @@ body {
   .page-pad { padding: 56px 20px 100px !important; }
   .article-content pre { font-size: 0.78rem; padding: 1rem 1rem; }
   .copy-btn { display: none; }
+  /* Admin nav mobile */
+  .admin-nav-links { display: none !important; }
+  .admin-nav-view { display: none !important; }
+  .admin-nav-logout { display: none !important; }
+  .admin-nav-burger { display: block !important; }
 }

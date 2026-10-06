@@ -216,6 +216,58 @@ export default function ArticleEditor({ article }: { article?: ArticleData & { i
             rows={24}
             placeholder="Write in markdown..."
             style={{ ...inputStyle, resize: "vertical", fontFamily: "'JetBrains Mono', monospace", fontSize: 13, lineHeight: 1.7, borderRadius: previewMode === "split" ? "4px 0 0 4px" : "4px" }}
+            onKeyDown={e => {
+              const ta = e.currentTarget;
+              const start = ta.selectionStart;
+
+              if (e.key === "Tab") {
+                e.preventDefault();
+                const insert = "  ";
+                const next = content.slice(0, start) + insert + content.slice(ta.selectionEnd);
+                setContent(next);
+                setTimeout(() => ta.setSelectionRange(start + 2, start + 2), 0);
+                return;
+              }
+
+              if (e.key === "Enter") {
+                const lineStart = content.lastIndexOf("\n", start - 1) + 1;
+                const currentLine = content.slice(lineStart, start);
+                const bulletMatch = currentLine.match(/^(\s*)([-*+] )(.*)/);
+                const numMatch = currentLine.match(/^(\s*)(\d+)\. (.*)/);
+
+                if (bulletMatch) {
+                  e.preventDefault();
+                  const [, indent, marker, rest] = bulletMatch;
+                  if (!rest.trim()) {
+                    // Empty bullet — exit list
+                    const next = content.slice(0, lineStart) + "\n" + content.slice(start);
+                    setContent(next);
+                    setTimeout(() => ta.setSelectionRange(lineStart + 1, lineStart + 1), 0);
+                  } else {
+                    const insert = "\n" + indent + marker;
+                    const next = content.slice(0, start) + insert + content.slice(start);
+                    setContent(next);
+                    setTimeout(() => ta.setSelectionRange(start + insert.length, start + insert.length), 0);
+                  }
+                  return;
+                }
+
+                if (numMatch) {
+                  e.preventDefault();
+                  const [, indent, num, rest] = numMatch;
+                  if (!rest.trim()) {
+                    const next = content.slice(0, lineStart) + "\n" + content.slice(start);
+                    setContent(next);
+                    setTimeout(() => ta.setSelectionRange(lineStart + 1, lineStart + 1), 0);
+                  } else {
+                    const insert = "\n" + indent + (parseInt(num) + 1) + ". ";
+                    const next = content.slice(0, start) + insert + content.slice(start);
+                    setContent(next);
+                    setTimeout(() => ta.setSelectionRange(start + insert.length, start + insert.length), 0);
+                  }
+                }
+              }
+            }}
           />
         )}
         {previewMode !== "write" && (
