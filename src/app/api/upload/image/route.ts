@@ -3,7 +3,8 @@ import { getSession } from "@/app/lib/auth";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 
-const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml"];
+const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
 
 export async function POST(req: NextRequest) {
   const session = await getSession();
@@ -13,7 +14,10 @@ export async function POST(req: NextRequest) {
   const file = formData.get("image") as File | null;
   if (!file) return NextResponse.json({ error: "No file provided" }, { status: 400 });
   if (!ALLOWED_TYPES.includes(file.type)) {
-    return NextResponse.json({ error: "Must be an image (jpg, png, gif, webp, svg)" }, { status: 400 });
+    return NextResponse.json({ error: "Must be an image (jpg, png, gif, webp)" }, { status: 400 });
+  }
+  if (file.size > MAX_SIZE_BYTES) {
+    return NextResponse.json({ error: "Image must be under 5 MB" }, { status: 400 });
   }
 
   const rawExt = file.name.split(".").pop()?.toLowerCase() || "jpg";

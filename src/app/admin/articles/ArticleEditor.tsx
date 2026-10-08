@@ -110,7 +110,7 @@ export default function ArticleEditor({ article }: { article?: ArticleData & { i
       <input
         ref={imgInputRef}
         type="file"
-        accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml"
+        accept="image/jpeg,image/png,image/gif,image/webp"
         style={{ display: "none" }}
         onChange={e => { const f = e.target.files?.[0]; if (f) uploadImage(f); e.target.value = ""; }}
       />

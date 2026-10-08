@@ -11,6 +11,7 @@ export async function POST(req: NextRequest) {
   const file = formData.get("pdf") as File | null;
   if (!file) return NextResponse.json({ error: "No file provided" }, { status: 400 });
   if (file.type !== "application/pdf") return NextResponse.json({ error: "Must be a PDF" }, { status: 400 });
+  if (file.size > 10 * 1024 * 1024) return NextResponse.json({ error: "PDF must be under 10 MB" }, { status: 400 });
 
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);

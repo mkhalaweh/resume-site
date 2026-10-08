@@ -10,13 +10,15 @@ export function markdownToHtml(md: string): string {
   const esc = (s: string) =>
     s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
+  const safeUrl = (u: string) => /^javascript:/i.test(u.trim()) ? "#" : u;
+
   const inline = (s: string) =>
     esc(s)
       .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
       .replace(/\*(.+?)\*/g, "<em>$1</em>")
       .replace(/`(.+?)`/g, '<code class="inline-code">$1</code>')
-      .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" style="max-width:100%;height:auto;border-radius:4px;margin:1rem 0;" />')
-      .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="article-link" target="_blank" rel="noopener">$1</a>');
+      .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, url) => `<img src="${safeUrl(url)}" alt="${alt}" style="max-width:100%;height:auto;border-radius:4px;margin:1rem 0;" />`)
+      .replace(/\[(.+?)\]\((.+?)\)/g, (_, text, url) => `<a href="${safeUrl(url)}" class="article-link" target="_blank" rel="noopener">${text}</a>`);
 
   const flushList = () => {
     if (inList) { out.push("</ul>"); inList = false; }
