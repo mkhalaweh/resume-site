@@ -248,8 +248,8 @@ export default function Terminal({ resume, articles }: { resume: ResumeForTermin
     const dirs = names.filter(n => node.children[n].type === "dir").sort();
     const files = names.filter(n => node.children[n].type !== "dir").sort();
     const parts = [
-      ...dirs.map(d => `<span style="color:var(--accent)">${d}/</span>`),
-      ...files.map(f => `<span style="color:var(--term-text)">${f}</span>`),
+      ...dirs.map(d => `<span style="color:var(--accent)">${esc(d)}/</span>`),
+      ...files.map(f => `<span style="color:var(--term-text)">${esc(f)}</span>`),
     ];
     return parts.join("  ") || '<span style="color:#455058">(empty)</span>';
   };
@@ -261,7 +261,7 @@ export default function Terminal({ resume, articles }: { resume: ResumeForTermin
       const child = node.children[name];
       const last = i === names.length - 1;
       const col = child.type === "dir" ? "var(--accent)" : "var(--term-text)";
-      out += `${prefix}${last ? "└── " : "├── "}<span style="color:${col}">${name}${child.type === "dir" ? "/" : ""}</span>\n`;
+      out += `${prefix}${last ? "└── " : "├── "}<span style="color:${col}">${esc(name)}${child.type === "dir" ? "/" : ""}</span>\n`;
       if (child.type === "dir") out += treeStr(child, prefix + (last ? "    " : "│   "), showHidden);
     });
     return out;
@@ -316,7 +316,7 @@ export default function Terminal({ resume, articles }: { resume: ResumeForTermin
       return currentCwd;
     }
     if (cmd === "ping") {
-      addEntry(`${args[0] || "host"}: already there. employee since 2025 — 0% packet loss.`);
+      addEntry(`${esc(args[0] || "host")}: already there. employee since 2025 — 0% packet loss.`);
       return currentCwd;
     }
     if (cmd === "sl") {
@@ -349,8 +349,8 @@ export default function Terminal({ resume, articles }: { resume: ResumeForTermin
       case "ls": {
         const target = args[0] ? resolvePath(args[0], currentCwd) : currentCwd;
         const node = getNode(target);
-        if (!node) { addEntry(`ls: cannot access '${args[0] || ""}': No such file or directory`, "err"); break; }
-        if (node.type !== "dir") { addEntry(args[0] || "", "out"); break; }
+        if (!node) { addEntry(`ls: cannot access '${esc(args[0] || "")}': No such file or directory`, "err"); break; }
+        if (node.type !== "dir") { addEntry(esc(args[0] || ""), "out"); break; }
         const showHidden = flags.includes("a") || flags.includes("l");
         addEntry(listDir(node, showHidden));
         break;
@@ -359,8 +359,8 @@ export default function Terminal({ resume, articles }: { resume: ResumeForTermin
         if (!args[0] || args[0] === "~") { newCwd = []; break; }
         const target = resolvePath(args[0], currentCwd);
         const node = getNode(target);
-        if (!node) { addEntry(`cd: ${args[0]}: No such file or directory`, "err"); break; }
-        if (node.type !== "dir") { addEntry(`cd: ${args[0]}: Not a directory`, "err"); break; }
+        if (!node) { addEntry(`cd: ${esc(args[0])}: No such file or directory`, "err"); break; }
+        if (node.type !== "dir") { addEntry(`cd: ${esc(args[0])}: Not a directory`, "err"); break; }
         newCwd = target;
         break;
       }
@@ -368,8 +368,8 @@ export default function Terminal({ resume, articles }: { resume: ResumeForTermin
         if (!args[0]) { addEntry("cat: missing operand", "err"); break; }
         const target = resolvePath(args[0], currentCwd);
         const node = getNode(target);
-        if (!node) { addEntry(`cat: ${args[0]}: No such file or directory`, "err"); break; }
-        if (node.type === "dir") { addEntry(`cat: ${args[0]}: Is a directory`, "err"); break; }
+        if (!node) { addEntry(`cat: ${esc(args[0])}: No such file or directory`, "err"); break; }
+        if (node.type === "dir") { addEntry(`cat: ${esc(args[0])}: Is a directory`, "err"); break; }
         if (node.type === "pdf") { addEntry("resume.pdf is binary — downloading..."); downloadResume(); break; }
         const fname = target[target.length - 1] || "";
         if (fname.endsWith(".md")) addEntry(renderMarkdown(node.content));
@@ -381,11 +381,11 @@ export default function Terminal({ resume, articles }: { resume: ResumeForTermin
         const openTarget = resolvePath(args[0] || "", currentCwd);
         const openNode = getNode(openTarget);
         if (openNode && openNode.type === "file" && openNode.url) {
-          addEntry(`opening ${args[0]}...`);
+          addEntry(`opening ${esc(args[0])}...`);
           window.open(openNode.url, "_blank", "noopener");
           break;
         }
-        addEntry(`open: ${args[0] || ""}: No such file or directory`, "err");
+        addEntry(`open: ${esc(args[0] || "")}: No such file or directory`, "err");
         break;
       }
       case "pwd":
